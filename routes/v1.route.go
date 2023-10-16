@@ -10,7 +10,7 @@ func v1Route(app *fiber.App) {
 	v1 := app.Group("/api/v1")
 
 	// Todo
-	todo := v1.Group("/todo")
+	todo := v1.Group("/todos")
 	todo.Post("/", controllers.CreateTodo)
 	todo.Get("/", controllers.GetAllTodo)
 	todo.Get("/:id", controllers.GetTodoByID)

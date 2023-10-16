@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"todo-app-fiber/database"
 	"todo-app-fiber/models"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
-
-var DB *gorm.DB
 
 var db_name = ""
 var db_port = "3306"
@@ -44,7 +43,7 @@ func connectDatabase() {
 	var errConnection error
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", db_user, db_password, db_host, db_port, db_name)
-	DB, errConnection = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	database.DB, errConnection = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if errConnection != nil {
 		panic("Can't connect to database")
@@ -54,7 +53,7 @@ func connectDatabase() {
 }
 
 func runMigration() {
-	err := DB.AutoMigrate(
+	err := database.DB.AutoMigrate(
 		models.Todo{},
 	)
 

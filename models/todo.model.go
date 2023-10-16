@@ -7,11 +7,11 @@ import (
 )
 
 type Todo struct {
-	ID         uint            `gorm:"primary_key"`
-	Name       string          `gorm:"varchar(255)"`
-	Note       string          `gorm:"varchar(255)"`
-	IsComplete bool            `gorm:"boolean,default:false"`
-	CreatedAt  time.Time       `gorm:"autoCreateTime"`
-	UpdatedAt  time.Time       `gorm:"autoUpdateTime"`
-	DeletedAt  *gorm.DeletedAt `gorm:"index"`
+	ID         uint           `json:"id" gorm:"primary_key"`
+	Name       string         `json:"name" gorm:"not null"`
+	Note       string         `json:"note" gorm:""`
+	IsComplete bool           `json:"is_complete" gorm:"default:false;not null"`
+	CreatedAt  time.Time      `json:"created_at"`
+	UpdatedAt  time.Time      `json:"updated_at"`
+	DeletedAt  gorm.DeletedAt `json:"-"`
 }
