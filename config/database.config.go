@@ -17,7 +17,7 @@ var db_user = "root"
 var db_password = ""
 var db_host = "127.0.0.1"
 
-func bootDatabase() {
+func BootDatabase() {
 	if dbNameEnv := os.Getenv("DB_NAME"); dbNameEnv != "" {
 		db_name = dbNameEnv
 	}
@@ -39,7 +39,7 @@ func bootDatabase() {
 	}
 }
 
-func connectDatabase() {
+func ConnectDatabase() {
 	var errConnection error
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", db_user, db_password, db_host, db_port, db_name)
@@ -52,7 +52,7 @@ func connectDatabase() {
 	}
 }
 
-func runMigration() {
+func RunMigration() {
 	err := database.DB.AutoMigrate(
 		models.Todo{},
 	)
