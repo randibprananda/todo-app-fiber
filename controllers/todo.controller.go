@@ -36,7 +36,7 @@ func CreateTodo(c *fiber.Ctx) error {
 	todo.IsComplete = todoReq.IsComplete
 
 	if todoReq.Note != "" {
-		todo.Note = todoReq.Note
+		todo.Note = &todoReq.Note
 	}
 
 	if errDb := database.DB.Create(&todo).Error; errDb != nil {
@@ -72,13 +72,85 @@ func GetAllTodo(c *fiber.Ctx) error {
 }
 
 func GetTodoByID(c *fiber.Ctx) error {
-	return nil
+	todoId := c.Params("id")
+	todo := models.Todo{}
+
+	if err := database.DB.First(&todo, todoId).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{
+			"message": "Todo not found",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Data transmited",
+		"data":    todo,
+	})
 }
 
 func UpdateTodoByID(c *fiber.Ctx) error {
-	return nil
+	todoReq := request.TodoUpdateRequest{}
+
+	// Parse request body
+	if errParse := c.BodyParser(&todoReq); errParse != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"message": "Fail to parsing data",
+			"error":   errParse.Error(),
+		})
+	}
+
+	// Validation request data
+	validate := validator.New()
+
+	if errValidate := validate.Struct(&todoReq); errValidate != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"message": "Some data is not valid",
+			"error":   errValidate.Error(),
+		})
+	}
+
+	todoId := c.Params("id")
+	todo := models.Todo{}
+
+	if err := database.DB.First(&todo, todoId).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{
+			"message": "Todo not found",
+		})
+	}
+
+	todo.Name = todoReq.Name
+	todo.Note = &todoReq.Note
+	todo.IsComplete = todoReq.IsComplete
+
+	if errSave := database.DB.Save(&todo).Error; errSave != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"message": "Internal server error",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Todo updated",
+		"data":    todo,
+	})
+
 }
 
-func DeleteTodoById(c *fiber.Ctx) error {
-	return nil
+func DeleteTodoByID(c *fiber.Ctx) error {
+	todoId := c.Params("id")
+	todo := models.Todo{}
+
+	if err := database.DB.First(&todo, todoId).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{
+			"message": "Todo not found",
+		})
+	}
+
+	if errDelete := database.DB.Delete(&todo).Error; errDelete != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"message": "Internal server error",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Todo deleted",
+	})
 }

@@ -15,5 +15,5 @@ func v1Route(app *fiber.App) {
 	todo.Get("/", controllers.GetAllTodo)
 	todo.Get("/:id", controllers.GetTodoByID)
 	todo.Patch("/:id", controllers.UpdateTodoByID)
-	todo.Delete("/:id", controllers.DeleteTodoById)
+	todo.Delete("/:id", controllers.DeleteTodoByID)
 }
